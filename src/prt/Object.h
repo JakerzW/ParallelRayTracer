@@ -1,0 +1,7 @@
+class Object
+{
+	private:
+
+	public:
+
+};

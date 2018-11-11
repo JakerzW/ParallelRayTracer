@@ -1,0 +1,7 @@
+class Camera
+{
+	private:
+
+	public: 
+
+};

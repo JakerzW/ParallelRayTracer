@@ -9,7 +9,6 @@ include_directories(
 	contrib/glm
 )
 
-
 link_directories(
 	${CMAKE_SOURCE_DIR}/contrib/SDL2/lib
 	${CMAKE_SOURCE_DIR}/contrib/SDL2_image/lib
@@ -22,6 +21,14 @@ endif()
 
 add_executable(prt 
 	src/prt/main.cpp
+	src/prt/Camera.cpp
+	src/prt/Camera.h
+	src/prt/Object.cpp
+	src/prt/Object.h
+	src/prt/Ray.cpp
+	src/prt/Ray.h
+	src/prt/RayTracer.cpp
+	src/prt/RayTracer.h
 )
 
 if(MSVC)

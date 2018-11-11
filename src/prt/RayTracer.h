@@ -1,0 +1,7 @@
+class RayTracer
+{
+	private:
+
+	public:
+
+};
