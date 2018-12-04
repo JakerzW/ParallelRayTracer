@@ -31,6 +31,10 @@ add_executable(prt
 	src/prt/RayTracer.h
 )
 
+target_link_libraries(prt
+		SDL2 glew32 opengl32
+	)
+
 if(MSVC)
   add_custom_command(TARGET prt POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
