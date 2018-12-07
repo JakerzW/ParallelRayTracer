@@ -29,6 +29,8 @@ add_executable(prt
 	src/prt/Ray.h
 	src/prt/RayTracer.cpp
 	src/prt/RayTracer.h
+	src/prt/Sphere.cpp
+	src/prt/Sphere.h
 )
 
 target_link_libraries(prt
