@@ -1,10 +1,9 @@
 #include "Ray.h"
 
-void Ray::SetOrigin(glm::ivec2 origCoords)
+void Ray::Init(glm::vec3 o, glm::vec3 d)
 {
-	origin.x = origCoords.x;
-	origin.y = origCoords.y;
-	origin.z = -1;
+	origin = o;
+	direction = d;
 }
 
 glm::vec3 Ray::GetOrigin()
@@ -15,4 +14,9 @@ glm::vec3 Ray::GetOrigin()
 glm::vec3 Ray::GetDirection()
 {
 	return direction;
+}
+
+glm::vec3 Ray::GetPointAtParameter(float t)
+{
+	return (origin + (t * direction));
 }

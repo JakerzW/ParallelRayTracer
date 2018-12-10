@@ -10,9 +10,10 @@ class Ray
 		glm::vec3 direction;
 
 	public: 
-		void SetOrigin(glm::ivec2 origCoords);
+		void Init(glm::vec3 o, glm::vec3 d);
 		glm::vec3 GetOrigin();
 		glm::vec3 GetDirection();
+		glm::vec3 GetPointAtParameter(float t);
 };
 
 #endif

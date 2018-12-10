@@ -8,7 +8,13 @@
 
 #include <memory>
 
-class Sphere : public Object
+struct RaySphereTest
+{
+	glm::vec3 IntersectPoint = glm::vec3(0, 0, 0);
+	bool didIntersect;
+};
+
+class Sphere 
 {
 	private:
 		float radius;
@@ -17,7 +23,6 @@ class Sphere : public Object
 
 	public: 
 		Sphere(float rad, glm::vec3 pos, glm::vec3 col);
-		glm::vec3 Shade(std::shared_ptr<Ray> ray, glm::vec3 intersect);
 		float GetRadius();
 		glm::vec3 GetPosition();
 };

@@ -1,8 +1,8 @@
 #include "Camera.h"
-#include "Object.h"
 #include "Ray.h"
 #include "RayTracer.h"
 #include "Sphere.h"
+#include "Object.h"
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -13,18 +13,16 @@
 
 int main()
 {
-	std::cout << "Doing nothing..." << std::endl;
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "Something went wrong, cannot initialise SDL." << std::endl;
 		return -1;
 	}
 	
-	int winPosX = 500;
+	int winPosX = 100;
 	int winPosY = 100;
-	int winWidth = 800;
-	int winHeight = 800;
+	int winWidth = 1000;
+	int winHeight = 500;
 
 	SDL_Window* window = SDL_CreateWindow("My Window", winPosX, winPosY, winWidth, winHeight,
 										  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
@@ -47,17 +45,28 @@ int main()
 	unsigned int currentTime;
 	float deltaTime;
 	int fps = 60;
-	float idealFps = (float)(1.0f / fps);
+	float idealFps = (float)(1.0f / fps);	
 
-	std::shared_ptr<Camera> camera;
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(5, glm::vec3(0, 0, -10), glm::vec3(255, 0, 0));
-	std::shared_ptr<RayTracer> tracer;
-	tracer->AddSphere(sphere);
-	int pixX = 250;
-	int pixY = 250;
+	glm::vec3 lowerLeftCorner = glm::vec3(-2, -1, -1);
+	glm::vec3 horizontal = glm::vec3(4, 0, 0);
+	glm::vec3 vertical = glm::vec3(0, 2, 0);
+	glm::vec3 origin = glm::vec3(0, 0, 0);
+
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>(origin, lowerLeftCorner, horizontal, vertical);
+
+	//list of objects
+	std::vector<std::shared_ptr<Sphere>> sphereList;
+
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(1, glm::vec3(0, 0, -1), glm::vec3(255, 0, 0));
+
+	sphereList.push_back(sphere);
+
+	std::shared_ptr<RayTracer> tracer = std::make_shared<RayTracer>();
 
 	while (running)
 	{
+		SDL_RenderClear(renderer);
+
 		SDL_Event event;
 		
 		while (SDL_PollEvent(&event))
@@ -78,63 +87,34 @@ int main()
 							running = false;
 							break;
 						}
-						case SDLK_UP:
-						{
-							pixY--;
-							break;
-						}
-						case SDLK_DOWN:
-						{
-							pixY++;
-							break;
-						}
-						case SDLK_LEFT:
-						{
-							pixX--;
-							break;
-						}
-						case SDLK_RIGHT:
-						{
-							pixX++;
-							break;
-						}
-
 					}
 				}
 			}
 			break;
 		}
 
-
 		currentTime = SDL_GetTicks();
 		deltaTime = (float)(currentTime - lastTime) / 1000.0f;
 		lastTime = currentTime;
 
-		//Do stuff
-
-		for (size_t i = 0; i < winWidth; i++)
+		//Main code
+		for (size_t j = winHeight-1; j >= 0; j--)
 		{
-			for (size_t j = 0; j < winHeight; j++)
+			for (size_t i = 0; i < winWidth; i++)
 			{
-				//Create a new ray
-				std::shared_ptr<Ray> newRay = camera->CreateRay(glm::ivec2(i, j));
+				float u = float(i) / float(winWidth);
+				float v = float(j) / float(winHeight);
+				
+				//glm::normalize
 
-				//Shoot ray and check for intersections
-				tracer->Trace(newRay);
+				//Create a new ray
+				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+
 
 			}
 		}
 
 		SDL_RenderPresent(renderer);
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
-
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-		SDL_RenderDrawPoint(renderer, pixX, pixY);
-
-		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		//(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//SDL_GL_SwapWindow(window);
 
 		if (idealFps > deltaTime)
 		{
@@ -143,8 +123,6 @@ int main()
 			SDL_Delay(delay);
 		}
 	}
-
-	//system("PAUSE");
 
 	return 0;
 }

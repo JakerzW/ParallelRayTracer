@@ -11,11 +11,14 @@
 class Camera
 {
 	private:
-		glm::vec3 viewMatrix;
-		glm::vec3 projMatrix;
+		glm::vec3 origin;
+		glm::vec3 lowerLeftCorner;
+		glm::vec3 horizontal;
+		glm::vec3 vertical;
 
 	public: 
-		std::shared_ptr<Ray> CreateRay(glm::ivec2 pixCoords);
+		Camera(glm::vec3 o, glm::vec3 l, glm::vec3 h, glm::vec3 v);
+		std::shared_ptr<Ray> CreateRay(float u, float v);
 };
 
 #endif
