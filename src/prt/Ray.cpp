@@ -18,5 +18,5 @@ glm::vec3 Ray::GetDirection()
 
 glm::vec3 Ray::GetPointAtParameter(float t)
 {
-	return (origin + (t * direction));
+	return (origin + t * direction);
 }

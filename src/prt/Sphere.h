@@ -19,10 +19,9 @@ class Sphere
 	private:
 		float radius;
 		glm::vec3 position;
-		glm::vec3 colour;
 
 	public: 
-		Sphere(float rad, glm::vec3 pos, glm::vec3 col);
+		Sphere(float rad, glm::vec3 pos);
 		float GetRadius();
 		glm::vec3 GetPosition();
 		bool DidHit(std::shared_ptr<Ray> ray);

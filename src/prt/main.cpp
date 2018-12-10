@@ -47,17 +47,17 @@ int main()
 	int fps = 60;
 	float idealFps = (float)(1.0f / fps);	
 
-	glm::vec3 lowerLeftCorner = glm::vec3(-2.0f, -1.0f, -1.0f);
-	glm::vec3 horizontal = glm::vec3(4.0f, 0.0f, 0.0f);
-	glm::vec3 vertical = glm::vec3(0.0f, 2.0f, 0.0f);
-	glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lowerLeftCorner = glm::vec3(-2.0, -1.0, -1.0);
+	glm::vec3 horizontal = glm::vec3(4.0, 0.0, 0.0);
+	glm::vec3 vertical = glm::vec3(0.0, 2.0, 0.0);
+	glm::vec3 origin = glm::vec3(0.0, 0.0, 0.0);
 
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(origin, lowerLeftCorner, horizontal, vertical);
 
 	//list of objects
 	std::vector<std::shared_ptr<Sphere>> sphereList;
 
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1), glm::vec3(255, 0, 0));
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1));
 
 	sphereList.push_back(sphere);
 
@@ -107,7 +107,7 @@ int main()
 				float v = float(j) / float(winHeight);
 
 				//Create a new ray
-				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);				
+				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
 
 				glm::vec3 colour = tracer->Trace(newRay, sphere);	
 
@@ -133,4 +133,9 @@ int main()
 	}
 
 	return 0;
+}
+
+void colour(std::shared_ptr<Ray> ray)
+{
+
 }

@@ -1,10 +1,9 @@
 #include "Sphere.h"
 
-Sphere::Sphere(float rad, glm::vec3 pos, glm::vec3 col)
+Sphere::Sphere(float rad, glm::vec3 pos)
 {
 	radius = rad;
 	position = pos;
-	colour = col;
 }
 
 float Sphere::GetRadius()
@@ -22,8 +21,17 @@ bool Sphere::DidHit(std::shared_ptr<Ray> ray)
 	glm::vec3 oc = ray->GetOrigin() - position;
 	float a = glm::dot(ray->GetDirection(), ray->GetDirection());
 	float b = 2.0 * glm::dot(oc, ray->GetDirection());
-	float c = glm::dot(oc, oc) - pow(radius, 2);
-	float discriminant = pow(b, 2) - 4 * a * c;
+	float c = glm::dot(oc, oc) - radius * radius;
+	float discriminant = b * b - 4 * a * c;
 	   	 
 	return (discriminant > 0);
+
+	if (discriminant < 0)
+	{
+		return -1.0;
+	}
+	else
+	{
+		return (-b - sqrt(discriminant)) / (2.0 * a);
+	}
 }
