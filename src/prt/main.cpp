@@ -47,17 +47,17 @@ int main()
 	int fps = 60;
 	float idealFps = (float)(1.0f / fps);	
 
-	glm::vec3 lowerLeftCorner = glm::vec3(-2, -1, -1);
-	glm::vec3 horizontal = glm::vec3(4, 0, 0);
-	glm::vec3 vertical = glm::vec3(0, 2, 0);
-	glm::vec3 origin = glm::vec3(0, 0, 0);
+	glm::vec3 lowerLeftCorner = glm::vec3(-2.0f, -1.0f, -1.0f);
+	glm::vec3 horizontal = glm::vec3(4.0f, 0.0f, 0.0f);
+	glm::vec3 vertical = glm::vec3(0.0f, 2.0f, 0.0f);
+	glm::vec3 origin = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(origin, lowerLeftCorner, horizontal, vertical);
 
 	//list of objects
 	std::vector<std::shared_ptr<Sphere>> sphereList;
 
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(1, glm::vec3(0, 0, -1), glm::vec3(255, 0, 0));
+	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1), glm::vec3(255, 0, 0));
 
 	sphereList.push_back(sphere);
 
@@ -65,6 +65,7 @@ int main()
 
 	while (running)
 	{
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
 		SDL_Event event;
@@ -98,21 +99,28 @@ int main()
 		lastTime = currentTime;
 
 		//Main code
-		for (size_t j = winHeight-1; j >= 0; j--)
+		for (int j = winHeight - 1; j >= 0; j--)
 		{
-			for (size_t i = 0; i < winWidth; i++)
+			for (int i = 0; i < winWidth; i++)
 			{
 				float u = float(i) / float(winWidth);
 				float v = float(j) / float(winHeight);
-				
-				//glm::normalize
 
 				//Create a new ray
-				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);				
 
+				glm::vec3 colour = tracer->Trace(newRay, sphere);	
 
+				int pixelR = int(255.99 * colour.x);
+				int pixelG = int(255.99 * colour.y);
+				int pixelB = int(255.99 * colour.z);
+
+				SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
+				SDL_RenderDrawPoint(renderer, i, j);
 			}
 		}
+
+		//std::cout << "Drawing Complete." << std::endl;
 
 		SDL_RenderPresent(renderer);
 
