@@ -3,6 +3,7 @@
 #include "RayTracer.h"
 #include "Sphere.h"
 #include "Object.h"
+#include "ObjectList.h"
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -55,11 +56,16 @@ int main()
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(origin, lowerLeftCorner, horizontal, vertical);
 
 	//list of objects
-	std::vector<std::shared_ptr<Sphere>> sphereList;
+	std::vector<std::shared_ptr<Object>> objectList;
 
 	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1));
+	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(100, glm::vec3(0, -100.5, -1));
 
-	sphereList.push_back(sphere);
+	objectList.push_back(sphere);
+	objectList.push_back(sphere2);
+
+	std::shared_ptr<ObjectList> world = std::make_shared<ObjectList>(objectList);
+	//objectList.push_back(std::dynamic_pointer_cast(sphere));
 
 	std::shared_ptr<RayTracer> tracer = std::make_shared<RayTracer>();
 
@@ -97,26 +103,35 @@ int main()
 		currentTime = SDL_GetTicks();
 		deltaTime = (float)(currentTime - lastTime) / 1000.0f;
 		lastTime = currentTime;
+		
+		int ns = 100;
 
 		//Main code
 		for (int j = winHeight - 1; j >= 0; j--)
 		{
 			for (int i = 0; i < winWidth; i++)
 			{
-				float u = float(i) / float(winWidth);
-				float v = float(j) / float(winHeight);
+				glm::vec3 colour = glm::vec3();
 
-				//Create a new ray
-				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+				for (size_t h = 0; h < ns; h++)
+				{
+					float u = float(i) / float(winWidth);
+					float v = float(j) / float(winHeight);
 
-				glm::vec3 colour = tracer->Trace(newRay, sphere);	
+					std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+
+					glm::vec3 p = newRay->GetPointAtParameter(2.0);
+					colour += tracer->Trace(newRay, world);
+				}
+
+				colour /= float(ns);				
 
 				int pixelR = int(255.99 * colour.x);
 				int pixelG = int(255.99 * colour.y);
 				int pixelB = int(255.99 * colour.z);
 
 				SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
-				SDL_RenderDrawPoint(renderer, i, j);
+				SDL_RenderDrawPoint(renderer, i, winHeight - j);
 			}
 		}
 
@@ -133,9 +148,4 @@ int main()
 	}
 
 	return 0;
-}
-
-void colour(std::shared_ptr<Ray> ray)
-{
-
 }

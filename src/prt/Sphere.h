@@ -14,7 +14,7 @@ struct RaySphereTest
 	bool didIntersect;
 };
 
-class Sphere 
+class Sphere : public Object
 {
 	private:
 		float radius;
@@ -24,7 +24,7 @@ class Sphere
 		Sphere(float rad, glm::vec3 pos);
 		float GetRadius();
 		glm::vec3 GetPosition();
-		bool DidHit(std::shared_ptr<Ray> ray);
+		bool DidHit(std::shared_ptr<Ray> ray, float tMin, float tMax, HitRecord &hitRec) const;
 };
 
 #endif

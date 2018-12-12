@@ -10,13 +10,17 @@
 //Any object within the world must inherit from this
 //All objects will require certain functions that are assigned in this class
 
+struct HitRecord
+{
+	float t = 0;
+	glm::vec3 p = glm::vec3();
+	glm::vec3 normal = glm::vec3();
+};
+
 class Object
 {
-	private:
-		
-
 	public:
-		glm::vec3 ClosestPoint(std::shared_ptr<Ray> ray, glm::vec3 queryPoint);
+	virtual bool DidHit(std::shared_ptr<Ray> ray, float tMin, float tMax, HitRecord &hitRec) const;
 };
 
 

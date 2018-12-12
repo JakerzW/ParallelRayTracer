@@ -25,6 +25,8 @@ add_executable(prt
 	src/prt/Camera.h
 	src/prt/Object.cpp
 	src/prt/Object.h
+	src/prt/ObjectList.cpp
+	src/prt/ObjectList.h
 	src/prt/Ray.cpp
 	src/prt/Ray.h
 	src/prt/RayTracer.cpp

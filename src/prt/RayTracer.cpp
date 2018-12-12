@@ -1,18 +1,18 @@
 #include "RayTracer.h"
+#include "Sphere.h"
+#include "ObjectList.h"
 
 #include <cmath>
 
-glm::vec3 RayTracer::Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Sphere> sphere)
+glm::vec3 RayTracer::Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Object> world)
 {
 	glm::vec3 colour;
 
-	float t = sphere->DidHit(ray);
+	HitRecord hitRec;
 
-	if (t > 0.0f)
+	if (world->DidHit(ray, 0.0f, FLT_MAX, hitRec))
 	{
-		//return glm::vec3(1, 0, 0);
-		glm::vec3 normal = glm::normalize(ray->GetPointAtParameter(t) - glm::vec3(0, 0, -1));
-		return (0.5f * glm::vec3(normal.x + 1, normal.y + 1, normal.z + 1));
+		colour = (0.5f * glm::vec3(hitRec.normal.x + 1, hitRec.normal.x + 1, hitRec.normal.x + 1));
 	}
 	else
 	{
