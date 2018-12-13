@@ -84,6 +84,7 @@ int main()
 	while (running)
 	{
 		bool startTrace = false;
+		bool parallel = false;
 		SDL_Event event;
 		
 		while (SDL_PollEvent(&event))
@@ -107,6 +108,13 @@ int main()
 						case SDLK_RETURN:
 						{
 							startTrace = true;
+							parallel = true;
+							break;
+						}
+						case SDLK_SPACE:
+						{
+							startTrace = true;
+							parallel = false;
 							break;
 						}
 						case SDLK_BACKSPACE:
@@ -127,7 +135,7 @@ int main()
 		int antialias = 100;
 
 		//Main code
-		if (startTrace)
+		if (startTrace && parallel)
 		{
 			tracer->Draw(camera, world, winWidth, winHeight, renderer, antialias);			
 
@@ -140,6 +148,39 @@ int main()
 			}
 			startTrace = false;
 		}		
+
+		else if (startTrace && !parallel)
+		{
+			int antialias = 100;
+			for (int i = 0; i < winWidth; i++)
+			{
+				for (int j = 0; j < winHeight; j++)
+				{
+					glm::vec3 colour = glm::vec3(0, 0, 0);
+
+					for (size_t h = 0; h < antialias; h++)
+					{
+						float u = float(i + (float)rand() / (RAND_MAX + 1.0)) / float(winWidth);
+						float v = float(j + (float)rand() / (RAND_MAX + 1.0)) / float(winHeight);
+
+						std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+						glm::vec3 p = newRay->GetPointAtParameter(2.0);
+						colour += tracer->Trace(newRay, world, 0);
+					}
+
+					colour /= float(antialias);
+					colour = glm::vec3(sqrt(colour.x), sqrt(colour.y), sqrt(colour.z));
+
+					int pixelR = int(255.99 * colour.x);
+					int pixelG = int(255.99 * colour.y);
+					int pixelB = int(255.99 * colour.z);
+
+					SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
+					SDL_RenderDrawPoint(renderer, i, winHeight - j);
+				}
+			}
+			startTrace = false;
+		}
 
 		//std::cout << "Drawing Complete." << std::endl;
 

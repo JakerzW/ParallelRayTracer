@@ -106,10 +106,10 @@ void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 			{
 				float u = float(i + (double)rand() / (RAND_MAX + 1.0)) / float(winWidth);
 				float v = float(j + (double)rand() / (RAND_MAX + 1.0)) / float(winHeight);
-
+				
+				//mtx.lock();
 				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
 				glm::vec3 p = newRay->GetPointAtParameter(2.0);
-				//mtx.lock();
 				colour += Trace(newRay, world, 0);
 				//mtx.unlock();
 			}
