@@ -23,6 +23,8 @@ add_executable(prt
 	src/prt/main.cpp
 	src/prt/Camera.cpp
 	src/prt/Camera.h
+	src/prt/Material.cpp
+	src/prt/Material.h
 	src/prt/Object.cpp
 	src/prt/Object.h
 	src/prt/ObjectList.cpp

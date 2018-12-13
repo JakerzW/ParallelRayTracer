@@ -1,9 +1,10 @@
 #include "Sphere.h"
 
-Sphere::Sphere(float rad, glm::vec3 pos)
+Sphere::Sphere(float rad, glm::vec3 pos, std::shared_ptr<Material> m)
 {
 	radius = rad;
 	position = pos;
+	material = m;
 }
 
 float Sphere::GetRadius()
@@ -26,20 +27,22 @@ bool Sphere::DidHit(std::shared_ptr<Ray> ray, float tMin, float tMax, HitRecord 
 
 	if (discriminant > 0)
 	{
-		float root = (-b - sqrt(b * b - a * c)) / a;
+		float root = (-b - sqrt(discriminant)) / a;
 		if (root < tMax && root > tMin)
 		{
 			hitRec.t = root;
 			hitRec.p = ray->GetPointAtParameter(hitRec.t);
 			hitRec.normal = (hitRec.p - position) / radius;
+			hitRec.material = material;
 			return true;
 		}
-		root = (-b + sqrt(b * b - a * c)) / a;
+		root = (-b + sqrt(discriminant)) / a;
 		if (root < tMax && root > tMin)
 		{
 			hitRec.t = root;
 			hitRec.p = ray->GetPointAtParameter(hitRec.t);
 			hitRec.normal = (hitRec.p - position) / radius;
+			hitRec.material = material;
 			return true;
 		}
 	}

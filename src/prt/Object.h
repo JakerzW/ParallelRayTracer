@@ -10,11 +10,15 @@
 //Any object within the world must inherit from this
 //All objects will require certain functions that are assigned in this class
 
+class Material;
+
 struct HitRecord
 {
 	float t = 0;
 	glm::vec3 p = glm::vec3();
 	glm::vec3 normal = glm::vec3();
+	std::shared_ptr<Material> material;
+
 };
 
 class Object

@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "Ray.h"
+#include "Material.h"
 
 #include <glm.hpp>
 
@@ -19,9 +20,10 @@ class Sphere : public Object
 	private:
 		float radius;
 		glm::vec3 position;
+		std::shared_ptr<Material> material;
 
 	public: 
-		Sphere(float rad, glm::vec3 pos);
+		Sphere(float rad, glm::vec3 pos, std::shared_ptr<Material> m);
 		float GetRadius();
 		glm::vec3 GetPosition();
 		bool DidHit(std::shared_ptr<Ray> ray, float tMin, float tMax, HitRecord &hitRec) const;

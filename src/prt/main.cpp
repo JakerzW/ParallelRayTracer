@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "Object.h"
 #include "ObjectList.h"
+#include "Material.h"
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -54,26 +55,37 @@ int main()
 	glm::vec3 origin = glm::vec3(0.0, 0.0, 0.0);
 
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(origin, lowerLeftCorner, horizontal, vertical);
+	
+	std::shared_ptr<RayTracer> tracer = std::make_shared<RayTracer>();
 
-	//list of objects
+	//List of objects
 	std::vector<std::shared_ptr<Object>> objectList;
 
-	std::shared_ptr<Sphere> sphere = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1));
-	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(100, glm::vec3(0, -100.5, -1));
+	std::shared_ptr<Lambertian> sphereMat1 = std::make_shared<Lambertian>(glm::vec3(0.8, 0.3, 0.3));
+	std::shared_ptr<Lambertian> sphereMat2 = std::make_shared<Lambertian>(glm::vec3(0.8, 0.8, 0.0));
+	std::shared_ptr<Metal> sphereMat3 = std::make_shared<Metal>(glm::vec3(0.8, 0.6, 0.2), 0.3);
+	std::shared_ptr<Metal> sphereMat4 = std::make_shared<Metal>(glm::vec3(0.8, 0.8, 0.8), 1.0);
 
-	objectList.push_back(sphere);
+	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1), sphereMat1);
+	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(100, glm::vec3(0, -100.5, -1), sphereMat2);
+	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.5, glm::vec3(1, 0, -1), sphereMat3);
+	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.5, glm::vec3(-1, 0, -1), sphereMat4);
+
+	/*std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1), new Lambertian(glm::vec3(0.8, 0.3, 0.3)));
+	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(100, glm::vec3(0, -100.5, -1), new Lambertian(glm::vec3(0.8, 0.8, 0.0)));
+	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.5, glm::vec3(1, 0, -1), new Lambertian(glm::vec3(0.8, 0.6, 0.2)));
+	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.5, glm::vec3(-1, 0, -1), new Lambertian(glm::vec3(0.8, 0.8, 0.8)));
+*/
+	objectList.push_back(sphere1);
 	objectList.push_back(sphere2);
+	objectList.push_back(sphere3);
+	objectList.push_back(sphere4);
 
 	std::shared_ptr<ObjectList> world = std::make_shared<ObjectList>(objectList);
-	//objectList.push_back(std::dynamic_pointer_cast(sphere));
-
-	std::shared_ptr<RayTracer> tracer = std::make_shared<RayTracer>();
 
 	while (running)
 	{
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
-
+		bool startTrace = false;
 		SDL_Event event;
 		
 		while (SDL_PollEvent(&event))
@@ -94,6 +106,16 @@ int main()
 							running = false;
 							break;
 						}
+						case SDLK_RETURN:
+						{
+							startTrace = true;
+							break;
+						}
+						case SDLK_BACKSPACE:
+						{
+							SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+							SDL_RenderClear(renderer);
+						}
 					}
 				}
 			}
@@ -107,33 +129,37 @@ int main()
 		int ns = 100;
 
 		//Main code
-		for (int j = winHeight - 1; j >= 0; j--)
+		if (startTrace)
 		{
-			for (int i = 0; i < winWidth; i++)
+			for (int j = winHeight - 1; j >= 0; j--)
 			{
-				glm::vec3 colour = glm::vec3();
-
-				for (size_t h = 0; h < ns; h++)
+				for (int i = 0; i < winWidth; i++)
 				{
-					float u = float(i + (float)rand() / RAND_MAX) / float(winWidth);
-					float v = float(j + (float)rand() / RAND_MAX) / float(winHeight);
+					glm::vec3 colour = glm::vec3(0, 0, 0);
 
-					std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+					for (size_t h = 0; h < ns; h++)
+					{
+						float u = float(i + (float)rand() / (RAND_MAX + 1.0)) / float(winWidth);
+						float v = float(j + (float)rand() / (RAND_MAX + 1.0)) / float(winHeight);
 
-					glm::vec3 p = newRay->GetPointAtParameter(2.0);
-					colour += tracer->Trace(newRay, world);
+						std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
+						glm::vec3 p = newRay->GetPointAtParameter(2.0);
+						colour += tracer->Trace(newRay, world, 0);
+					}
+
+					colour /= float(ns);	
+					colour = glm::vec3(sqrt(colour.x), sqrt(colour.y), sqrt(colour.z));
+
+					int pixelR = int(255.99 * colour.x);
+					int pixelG = int(255.99 * colour.y);
+					int pixelB = int(255.99 * colour.z);
+
+					SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
+					SDL_RenderDrawPoint(renderer, i, winHeight - j);
 				}
-
-				colour /= float(ns);				
-
-				int pixelR = int(255.99 * colour.x);
-				int pixelG = int(255.99 * colour.y);
-				int pixelB = int(255.99 * colour.z);
-
-				SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
-				SDL_RenderDrawPoint(renderer, i, winHeight - j);
 			}
-		}
+			startTrace = false;
+		}		
 
 		//std::cout << "Drawing Complete." << std::endl;
 
