@@ -99,7 +99,7 @@ void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 	{
 		for (int j = yMin; j < yMax; j++)
 		{
-			Pixel currentPix;
+			std::shared_ptr<Pixel> currentPix = std::make_shared<Pixel>();
 			glm::vec3 colour = glm::vec3(0, 0, 0);
 
 			for (size_t h = 0; h < antialias; h++)
@@ -109,7 +109,9 @@ void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 
 				std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
 				glm::vec3 p = newRay->GetPointAtParameter(2.0);
+				//mtx.lock();
 				colour += Trace(newRay, world, 0);
+				//mtx.unlock();
 			}
 
 			colour /= float(antialias);
@@ -123,8 +125,12 @@ void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 			int pixelG = int(255.99 * colour.y);
 			int pixelB = int(255.99 * colour.z);*/
 
-			currentPix.colour = colour;
-			currentPix.pixCoords = glm::ivec2(i, j);
+			currentPix->colour = colour;
+			currentPix->pixCoords = glm::ivec2(i, j);
+			
+			mtx.lock();
+			allPixels.push_back(currentPix);
+			mtx.unlock();
 
 			//SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
 			//SDL_RenderDrawPoint(renderer, i, winHeight - j);

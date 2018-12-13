@@ -131,11 +131,12 @@ int main()
 		{
 			tracer->Draw(camera, world, winWidth, winHeight, renderer, antialias);			
 
-			for (size_t i = 0; i < tracer->GetAllPixels().size(); i++)
+			std::vector<std::shared_ptr<Pixel>> allPix = tracer->GetAllPixels();
+
+			for (size_t i = 0; i < allPix.size(); i++)
 			{
-				std::shared_ptr<Pixel> currentPix = tracer->GetAllPixels().at(i);
-				SDL_SetRenderDrawColor(renderer, currentPix->colour.x, currentPix->colour.y, currentPix->colour.z, 255);
-				SDL_RenderDrawPoint(renderer, currentPix->pixCoords.x, winHeight - currentPix->pixCoords.y);				
+				SDL_SetRenderDrawColor(renderer, allPix.at(i)->colour.x, allPix.at(i)->colour.y, allPix.at(i)->colour.z, 255);
+				SDL_RenderDrawPoint(renderer, allPix.at(i)->pixCoords.x, winHeight - allPix.at(i)->pixCoords.y);
 			}
 			startTrace = false;
 		}		

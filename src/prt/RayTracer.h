@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <memory>
+#include <mutex>
 
 struct Pixel
 {
@@ -29,6 +30,7 @@ class RayTracer
 		int antialias;
 		int winWidth;
 		int winHeight;
+		std::mutex mtx;
 
 	public:
 		glm::vec3 Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Object> world, int depth);
