@@ -1,19 +1,21 @@
 #include "RayTracer.h"
 #include "Sphere.h"
 #include "ObjectList.h"
+#include "Ray.h"
 
 #include <cmath>
 
 glm::vec3 RayTracer::Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Object> world)
 {
-	glm::vec3 colour;
+	glm::vec3 colour = glm::vec3();
 
 	HitRecord hitRec;
 
 	if (world->DidHit(ray, 0.0f, FLT_MAX, hitRec))
 	{
 		glm::vec3 target = hitRec.p + hitRec.normal + RandomInUnitSphere();
-		//colour = 0.5 * Trace(ray);
+		std::shared_ptr<Ray> newRay = std::make_shared<Ray>(hitRec.p, target - hitRec.p);
+		colour = 0.5f * Trace(newRay, world);
 		//colour = (0.5f * glm::vec3(hitRec.normal.x + 1, hitRec.normal.x + 1, hitRec.normal.x + 1));
 	}
 	else
@@ -32,7 +34,7 @@ glm::vec3 RayTracer::RandomInUnitSphere()
 
 	do
 	{
-		p = 2.0f * glm::vec3(rand(), rand(), rand()) - glm::vec3(1, 1, 1);
+		p = 2.0f * glm::vec3((float)rand()/RAND_MAX, (float)rand() / RAND_MAX, (float)rand() / RAND_MAX) - glm::vec3(1, 1, 1);
 	} while (pow(glm::length(p),2) >= 1.0);
 
 	return p;

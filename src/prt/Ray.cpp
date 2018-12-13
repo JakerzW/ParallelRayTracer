@@ -1,6 +1,16 @@
 #include "Ray.h"
 
-void Ray::Init(glm::vec3 o, glm::vec3 d)
+Ray::Ray()
+{
+}
+
+Ray::Ray(glm::vec3 &o, glm::vec3 &d)
+{
+	origin = o;
+	direction = d;
+}
+
+void Ray::Init(glm::vec3 &o, glm::vec3 &d)
 {
 	origin = o;
 	direction = d;

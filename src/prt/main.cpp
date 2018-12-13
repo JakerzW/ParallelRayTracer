@@ -115,8 +115,8 @@ int main()
 
 				for (size_t h = 0; h < ns; h++)
 				{
-					float u = float(i) / float(winWidth);
-					float v = float(j) / float(winHeight);
+					float u = float(i + (float)rand() / RAND_MAX) / float(winWidth);
+					float v = float(j + (float)rand() / RAND_MAX) / float(winHeight);
 
 					std::shared_ptr<Ray> newRay = camera->CreateRay(u, v);
 
