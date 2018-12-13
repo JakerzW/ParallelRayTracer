@@ -1,3 +1,5 @@
+//Referncing Ray Tracing in a Weekend by Peter Shirley
+
 #include "Camera.h"
 #include "Ray.h"
 #include "RayTracer.h"
@@ -16,17 +18,20 @@
 
 int main()
 {
+	//Initialise SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "Something went wrong, cannot initialise SDL." << std::endl;
 		return -1;
 	}
 	
+	//Set the window size and position
 	int winPosX = 100;
 	int winPosY = 100;
 	int winWidth = 1000;
 	int winHeight = 500;
 
+	//Setup the SDL functions
 	SDL_Window* window = SDL_CreateWindow("My Window", winPosX, winPosY, winWidth, winHeight,
 										  SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
@@ -44,14 +49,14 @@ int main()
 	
 	bool running = true;
 
+	//Initialise the fps values
 	unsigned int lastTime = SDL_GetTicks();
 	unsigned int currentTime;
 	float deltaTime;
 	int fps = 60;
 	float idealFps = (float)(1.0f / fps);	
 
-	int numOfThreads = 8;
-
+	//Initialise the camera and ray tracer
 	glm::vec3 lowerLeftCorner = glm::vec3(-2.0, -1.0, -1.0);
 	glm::vec3 horizontal = glm::vec3(4.0, 0.0, 0.0);
 	glm::vec3 vertical = glm::vec3(0.0, 2.0, 0.0);
@@ -64,16 +69,19 @@ int main()
 	//List of objects
 	std::vector<std::shared_ptr<Object>> objectList;
 
+	//Initialise the object materials
 	std::shared_ptr<Lambertian> sphereMat1 = std::make_shared<Lambertian>(glm::vec3(0.8, 0.3, 0.3));
 	std::shared_ptr<Lambertian> sphereMat2 = std::make_shared<Lambertian>(glm::vec3(0.8, 0.8, 0.0));
 	std::shared_ptr<Metal> sphereMat3 = std::make_shared<Metal>(glm::vec3(0.8, 0.6, 0.2), 0.0);
 	std::shared_ptr<Metal> sphereMat4 = std::make_shared<Metal>(glm::vec3(0.8, 0.8, 0.8), 1.0);
 
+	//Initialiase the objects
 	std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(0.5, glm::vec3(0, 0, -1), sphereMat1);
 	std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(100, glm::vec3(0, -100.5, -1), sphereMat2);
 	std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(0.5, glm::vec3(1, 0, -1), sphereMat3);
 	std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(0.5, glm::vec3(-1, 0, -1), sphereMat4);
 
+	//Push back the objects into the object vector
 	objectList.push_back(sphere1);
 	objectList.push_back(sphere2);
 	objectList.push_back(sphere3);
@@ -81,12 +89,14 @@ int main()
 
 	std::shared_ptr<ObjectList> world = std::make_shared<ObjectList>(objectList);
 
+	//Start the program loop
 	while (running)
 	{
 		bool startTrace = false;
 		bool parallel = false;
 		SDL_Event event;
 		
+		//Control inputs
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type)
@@ -128,13 +138,14 @@ int main()
 			break;
 		}
 
+		//Calculate the fps timer
 		currentTime = SDL_GetTicks();
 		deltaTime = (float)(currentTime - lastTime) / 1000.0f;
 		lastTime = currentTime;
 		
 		int antialias = 100;
 
-		//Main code
+		//Start the parallel ray tracer
 		if (startTrace && parallel)
 		{
 			tracer->Draw(camera, world, winWidth, winHeight, renderer, antialias);			
@@ -149,6 +160,7 @@ int main()
 			startTrace = false;
 		}		
 
+		//Non-parallel version of the ray tracer
 		else if (startTrace && !parallel)
 		{
 			int antialias = 100;
@@ -182,10 +194,10 @@ int main()
 			startTrace = false;
 		}
 
-		//std::cout << "Drawing Complete." << std::endl;
-
+		//Present the window
 		SDL_RenderPresent(renderer);
 
+		//Stall the program if it's running over the fps timer
 		if (idealFps > deltaTime)
 		{
 			//std::cout << "Delaying..." << std::endl;

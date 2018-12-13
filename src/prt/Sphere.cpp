@@ -1,5 +1,6 @@
 #include "Sphere.h"
 
+//Initialise a sphere
 Sphere::Sphere(float rad, glm::vec3 pos, std::shared_ptr<Material> m)
 {
 	radius = rad;
@@ -7,16 +8,19 @@ Sphere::Sphere(float rad, glm::vec3 pos, std::shared_ptr<Material> m)
 	material = m;
 }
 
+//Return the radius
 float Sphere::GetRadius()
 {
 	return radius;
 }
 
+//Return the position
 glm::vec3 Sphere::GetPosition()
 {
 	return position;
 }
 
+//Calculate whether or not a ray has hit the sphere and manipulate the HitRecord variables
 bool Sphere::DidHit(std::shared_ptr<Ray> ray, float tMin, float tMax, HitRecord &hitRec) const
 {
 	glm::vec3 oc = ray->GetOrigin() - position;

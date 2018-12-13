@@ -1,0 +1,6 @@
+How to use my program:
+ - Open the build folder and load the Visual Studio 2017 solution.
+ - Run in either debug or release mode.
+ - Once loaded, press enter or spacebar to start rendering.
+ - Once rendered, press backspace to clear and rerender.
+ - Press esc to exit the program.

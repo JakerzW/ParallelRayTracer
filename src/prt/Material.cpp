@@ -5,6 +5,7 @@ Lambertian::Lambertian(const glm::vec3 &a) : albedo(a)
 
 }
 
+//Calculate the scatter for a matte object
 bool Lambertian::Scatter(std::shared_ptr<Ray> rayIn, HitRecord & hitRec, glm::vec3 & attenuation, std::shared_ptr<Ray> rayScattered) const
 {
 	glm::vec3 target = hitRec.p + hitRec.normal + RandomInUnitSphere();
@@ -14,6 +15,7 @@ bool Lambertian::Scatter(std::shared_ptr<Ray> rayIn, HitRecord & hitRec, glm::ve
 	return true;
 }
 
+//Initialise and calculate roughness for a metal object
 Metal::Metal(const glm::vec3 &a, float f) : albedo(a)
 {
 	if (f < 1)
@@ -26,6 +28,7 @@ Metal::Metal(const glm::vec3 &a, float f) : albedo(a)
 	}
 }
 
+//Calculate scatter for a metal object
 bool Metal::Scatter(std::shared_ptr<Ray> rayIn, HitRecord & hitRec, glm::vec3 & attenuation, std::shared_ptr<Ray> rayScattered) const
 {
 	glm::vec3 reflected = Reflect(glm::normalize(rayIn->GetDirection()), hitRec.normal);
@@ -35,6 +38,7 @@ bool Metal::Scatter(std::shared_ptr<Ray> rayIn, HitRecord & hitRec, glm::vec3 & 
 	return (glm::dot(rayScattered->GetDirection(), hitRec.normal) > 0);
 }
 
+//Calculate random ray direction
 glm::vec3 RandomInUnitSphere()
 {
 	glm::vec3 p;
@@ -52,6 +56,7 @@ glm::vec3 RandomInUnitSphere()
 	return p;
 }
 
+//Calculate the normal for a reflection
 glm::vec3 Reflect(glm::vec3 & v, glm::vec3 & n)
 {
 	return v - 2 * glm::dot(v, n) * n;

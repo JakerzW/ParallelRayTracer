@@ -10,6 +10,7 @@
 #include <thread>
 #include <iostream>
 
+//Trace the ray and calculate whether it hits an object in the world
 glm::vec3 RayTracer::Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Object> world, int depth)
 {
 	glm::vec3 colour = glm::vec3();
@@ -46,6 +47,7 @@ glm::vec3 RayTracer::Trace(std::shared_ptr<Ray> ray, std::shared_ptr<Object> wor
 	return colour;
 }
 
+//Calculate random ray direction
 glm::vec3 RayTracer::RandomInUnitSphere()
 {
 	glm::vec3 p;
@@ -63,6 +65,7 @@ glm::vec3 RayTracer::RandomInUnitSphere()
 	return p;
 }
 
+//Initialise the ray tracer and its threads
 void RayTracer::Draw(std::shared_ptr<Camera> c, std::shared_ptr<ObjectList> w, int winW, int winH, SDL_Renderer* r, int a)
 {
 	camera = c;
@@ -93,6 +96,7 @@ void RayTracer::Draw(std::shared_ptr<Camera> c, std::shared_ptr<ObjectList> w, i
 	std::cout << "Threads completed." << std::endl;
 }
 
+//The function that is run by each thread
 void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 {
 	for (int i = xMin; i < xMax; i++)
@@ -121,19 +125,12 @@ void RayTracer::RunThreads(int xMin, int xMax, int yMin, int yMax)
 			colour.y = int(255.99 * colour.y);
 			colour.z = int(255.99 * colour.z);
 
-			/*int pixelR = int(255.99 * colour.x);
-			int pixelG = int(255.99 * colour.y);
-			int pixelB = int(255.99 * colour.z);*/
-
 			currentPix->colour = colour;
 			currentPix->pixCoords = glm::ivec2(i, j);
 			
 			mtx.lock();
 			allPixels.push_back(currentPix);
 			mtx.unlock();
-
-			//SDL_SetRenderDrawColor(renderer, pixelR, pixelG, pixelB, 255);
-			//SDL_RenderDrawPoint(renderer, i, winHeight - j);
 		}
 	}
 }
